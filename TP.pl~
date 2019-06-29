@@ -163,13 +163,6 @@ elGranCandidato(Candidato) :-
 %%%%%%%%%%%%%%%%%%%%%%%
 %%5 Malas consultoras%%
 %%%%%%%%%%%%%%%%%%%%%%%
-ajusteConsultora(Partido,Provincia,PorcentajeVerdadero) :-
-	intencionDeVotoEn(Provincia,Partido,Porcentaje),
-	PorcentajeVerdadero is Porcentaje * 1,05.
-
-
-
-
 
 
 

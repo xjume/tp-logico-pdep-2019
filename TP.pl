@@ -164,6 +164,22 @@ elGranCandidato(Candidato) :-
 %%5 Malas consultoras%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%%6 Promesas de campaña%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+promete(azul,construir(edilicio(hospital,1000))).
+promete(azul,construir(edilicio(jardin,100))).
+promete(azul,construir(edilicio(escuela,5))).
+promete(amarillo,construir(edilicio(hospital,100))).
+promete(amarillo,construir(edilicio(universidad,1))).
+promete(amarillo,consturir(edilicio(comisaria,200))).
+promete(rojo,nuevosPuestosDeTrabajo(800000)).
+promete(amarillo,nuevosPuestosDeTrabajo(10000)).
+promete(azul,inflacion(2,4)).
+promete(amarillo,inflacion(1,15)).
+promete(rojo,inflacion(10,30)) :-
+	leGanaA(rojo,_,_).
 
 
 
