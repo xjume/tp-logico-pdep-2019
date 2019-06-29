@@ -66,6 +66,7 @@ not(candidato(peter,amarillo)).
 %%%%%%%%%%%%%%%%%%%%%%%
 %%2 Provincia picante%%
 %%%%%%%%%%%%%%%%%%%%%%%
+
 esPicante(Provincia) :-
 	sePostula(Candidato1,Provincia),
 	sePostula(Candidato2,Provincia),
@@ -147,6 +148,27 @@ leGanaA(Candidato1,Candidato2,Provincia) :-
 compite(Candidato,Provincia) :-
 	candidato(Candidato,Partido),
 	sePostula(Partido,Provincia).
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%%4 El gran candidato%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
+elGranCandidato(Candidato) :-
+	forall(compite(Candidato,Provincia), leGanaA(Candidato,_,Provincia)),
+	esElMasJoven(Candidato).
+
+% Deberíamos realizar una consulta de tipo Existencial, ya que nos
+% permite conocer el individuo que satisface la relacion.
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%%5 Malas consultoras%%
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
 
 
 
