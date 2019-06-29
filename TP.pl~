@@ -126,10 +126,26 @@ intencionDeVotoEn(misiones, rojo, 90).
 intencionDeVotoEn(misiones, azul, 0).
 intencionDeVotoEn(misiones, amarillo, 0).
 
+leGanaA(Candidato1,_,Provincia) :-
+	compite(Candidato1,Provincia).
+
+leGanaA(Candidato1,Candidato2,Provincia) :-
+	candidato(Candidato1,Partido1),
+	sePostula(Partido1,Provincia),
+	candidato(Candidato2,Partido2),
+	sePostula(Partido2,Provincia),
+	intencionDeVotoEn(Provincia,Partido1,Porcentaje1),
+	intencionDeVotoEn(Provincia,Partido2,Porcentaje2),
+	Porcentaje1 > Porcentaje2.
+
 leGanaA(Candidato1,Candidato2,Provincia) :-
 	candidato(Candidato1,Partido),
+	candidato(Candidato2,Partido),
 	sePostula(Partido,Provincia).
 
+compite(Candidato,Provincia) :-
+	candidato(Candidato,Partido),
+	sePostula(Partido,Provincia).
 
 
 
