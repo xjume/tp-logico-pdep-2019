@@ -1,9 +1,0 @@
-% Candidatos y partidos:
-
-candidato(frank,rojo).
-candidato(claire,rojo).
-candidato(garrett,azul).
-candidato(jackie,amarillo).
-
-edad(frank,50).
-edad(claire

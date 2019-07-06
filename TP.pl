@@ -1,6 +1,6 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%1 Candidatos y partidos%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%       Base de conocimiento       %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 candidato(frank,rojo).
 candidato(claire,rojo).
@@ -10,8 +10,6 @@ candidato(linda,azul).
 candidato(catherine,rojo).
 candidato(seth,amarillo).
 candidato(heather,amarillo).
-% No se defune el partido violeta en mi universo porque no tiene
-% candidatos.
 
 edad(frank,50).
 edad(claire,52).
@@ -20,8 +18,7 @@ edad(peter,26).
 edad(jackie,38).
 edad(linda,30).
 edad(catherine,59).
-% edad(heather,50). Pongo esto porque diceque nacio en 1969 y no
-% se si teng que hacer un predicado para sacar la edad????????
+edad(heather,50).
 
 sePostula(azul,buenosAires).
 sePostula(azul,chaco).
@@ -60,27 +57,31 @@ habitantes(laPampa,349299).
 habitantes(corrientes,992595).
 habitantes(misiones,1189446).
 
-not(sePostula(rojo,formosa)).
-not(candidato(peter,amarillo)).
+% No se define el partido violeta porque no tiene candidatos.
+% No se define la no pertenencia de Peter al partido Amarillo porque s贸lo declaramos verdades.
 
-%%%%%%%%%%%%%%%%%%%%%%%
-%%2 Provincia picante%%
-%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%               路 2 路               %%%%
+%%%%         Provincia picante         %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-esPicante(Provincia) :-
+esPicante(Provincia):-
 	sePostula(Candidato1,Provincia),
 	sePostula(Candidato2,Provincia),
 	masDeUnMillon(Provincia),
 	Candidato1 \= Candidato2.
 
-masDeUnMillon(Provincia) :-
+masDeUnMillon(Provincia):-
 	habitantes(Provincia,Habitantes),
 	Habitantes > 1000000.
 
-%%%%%%%%%%
-%%3 PASO%%
-%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%               路 3 路               %%%%
+%%%%               PASO                %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % intencionDeVotoEn(Provincia, Partido, Porcentaje)
+
 intencionDeVotoEn(buenosAires, rojo, 40).
 intencionDeVotoEn(buenosAires, azul, 30).
 intencionDeVotoEn(buenosAires, amarillo, 30).
@@ -127,17 +128,15 @@ intencionDeVotoEn(misiones, rojo, 90).
 intencionDeVotoEn(misiones, azul, 0).
 intencionDeVotoEn(misiones, amarillo, 0).
 
-leGanaA(Candidato1,_,Provincia) :-
-	compite(Candidato1,Provincia).
-
 leGanaA(Candidato1,Candidato2,Provincia) :-
-	candidato(Candidato1,Partido1),
-	sePostula(Partido1,Provincia),
-	candidato(Candidato2,Partido2),
-	sePostula(Partido2,Provincia),
+	compite(Candidato1,Provincia,_),
+	not(compite(Candidato2,Provincia,_)).
+
+leGanaA(Candidato1,Candidato2,Provincia):-
+	compite(Candidato1,Provincia,Partido1),
+	compite(Candidato2,Provincia,Partido2),
 	intencionDeVotoEn(Provincia,Partido1,Porcentaje1),
 	intencionDeVotoEn(Provincia,Partido2,Porcentaje2),
-	Porcentaje1 \= Porcentaje2,
 	Porcentaje1 > Porcentaje2.
 
 leGanaA(Candidato1,Candidato2,Provincia) :-
@@ -145,28 +144,64 @@ leGanaA(Candidato1,Candidato2,Provincia) :-
 	candidato(Candidato2,Partido),
 	sePostula(Partido,Provincia).
 
-compite(Candidato,Provincia) :-
+compite(Candidato,Provincia,Partido):-
 	candidato(Candidato,Partido),
 	sePostula(Partido,Provincia).
 
-%%%%%%%%%%%%%%%%%%%%%%%
-%%4 El gran candidato%%
-%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%               路 4 路               %%%%
+%%%%         El gran candidato         %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-elGranCandidato(Candidato) :-
-	forall(compite(Candidato,Provincia), leGanaA(Candidato,_,Provincia)),
-	esElMasJoven(Candidato).
+/*elGranCandidato(Candidato):-
+	forall(compite(Candidato,Provincia,_), leGanaA(Candidato,_,Provincia)),
+	candidato(Candidato,Partido),
+	esElMasJoven(Candidato,Partido).
 
-% Deber韆mos realizar una consulta de tipo Existencial, ya que nos
-% permite conocer el individuo que satisface la relacion.
+esElMasJoven(CandidatoUnico,Partido):-
+	forall(candidato(Candidato,Partido),sonElMismo(Candidato,CandidatoUnico)).
 
-%%%%%%%%%%%%%%%%%%%%%%%
-%%5 Malas consultoras%%
-%%%%%%%%%%%%%%%%%%%%%%%
+esElMasJoven(CandidatoJoven,Partido):-
+	forall(candidato(Candidato,Partido),esMayor(Candidato,CandidatoJoven)).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-%%6 Promesas de campa馻%%
-%%%%%%%%%%%%%%%%%%%%%%%%%
+sonElMismo(Candidato,Candidato).
+
+esMayor(Candidato,CandidatoJoven):-
+	edad(Candidato,Edad),
+	edad(CandidatoJoven,EdadJoven),
+	Candidato \= CandidatoJoven,
+	Edad > EdadJoven.*/
+
+% Deber铆amos realizar una consulta de tipo Existencial, ya que nos permite conocer al individuo que satisface la relaci贸n.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%               路 5 路               %%%%
+%%%%         Malas consultoras         %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/*ajusteConsultora(Partido,Provincia,PorcentajeVerdadero):-
+	intencionDeVotoEn(Provincia,Partido,Porcentaje),
+	partidoEnProvincia(Partido,Provincia,ModificacionSegunResultado),
+	nuevoPorcentaje(Porcentaje,ModificacionSegunResultado,PorcentajeVerdadero).
+
+partidoEnProvincia(Partido,Provincia,(-0.2)):-
+	forall(sePostula(PartidoX,Provincia),ganaElPartido(Partido,PartidoX,Provincia)).
+
+partidoEnProvincia(Partido,Provincia,0.5):-
+	forall(sePostula(PartidoX,Provincia),not(ganaElPartido(Partido,PartidoX,Provincia))).
+
+ganaElPartido(Partido,PartidoX,Provincia):-
+	intencionDeVotoEn(Provincia,Partido,Porcentaje),
+	intencionDeVotoEn(Provincia,PartidoX,PorcentajeX),
+	Porcentaje > PorcentajeX.
+
+nuevoPorcentaje(Porcentaje,Modificacion,PorcentajeVerdadero):-
+	PorcentajeVerdadero is Porcentaje + Porcentaje*Modificacion.*/
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%               路 6 路               %%%%
+%%%%        Promesas de campa帽a        %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 promete(azul,construir(edilicio(hospital,1000))).
 promete(azul,construir(edilicio(jardin,100))).
@@ -178,21 +213,42 @@ promete(rojo,nuevosPuestosDeTrabajo(800000)).
 promete(amarillo,nuevosPuestosDeTrabajo(10000)).
 promete(azul,inflacion(2,4)).
 promete(amarillo,inflacion(1,15)).
-promete(rojo,inflacion(10,30)) :-
-	leGanaA(rojo,_,_).
+promete(rojo,inflacion(10,30)).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%               路 7 路               %%%%
+%%%%      Ajustes de boca de urna      %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+influenciaDePromesas(inflacion(CotaInf,CotaSup),Variacion):-
+	Variacion is -((CotaSup+CotaInf)/2).
 
+influenciaDePromesas(nuevosPuestosDeTrabajo(Puestos),3):-
+	Puestos > 50000.
 
+influenciaDePromesas(nuevosPuestosDeTrabajo(Puestos),0):-
+	Puestos =< 50000.
 
+influenciaDePromesas(construir(edilicio(hospital,_)),2).
 
+influenciaDePromesas(construir(edilicio(jardin,Cantidad)),Variacion):-
+	Variacion is Cantidad * 0.1.
 
+influenciaDePromesas(construir(edilicio(escuela,Cantidad)),Variacion):-
+	Variacion is Cantidad * 0.1.
 
+influenciaDePromesas(construir(edilicio(comisaria,200)),2).
 
+influenciaDePromesas(construir(edilicio(universidad,_)),0).
 
+influenciaDePromesas(construir(edilicio(_,_)),(-1)).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%               路 8 路               %%%%
+%%%%           Nuevos votos            %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-
+/* promedioDeCrecimiento(Partido,SumatoriaCrecimiento):-
+	promete(Partido,Promesa),
+	findall(Porcentaje,influenciaDePromesas(Promesa,Porcentaje),Porcentajes),
+	sumlist(Porcentajes,SumatoriaCrecimiento). */
