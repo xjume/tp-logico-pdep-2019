@@ -61,7 +61,7 @@ habitantes(misiones,1189446).
 % No se define la no pertenencia de Peter al partido Amarillo porque sólo declaramos verdades.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%               · 2 ·               %%%%
+%%%%               - 2 -               %%%%
 %%%%         Provincia picante         %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -76,7 +76,7 @@ masDeUnMillon(Provincia):-
 	Habitantes > 1000000.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%               · 3 ·               %%%%
+%%%%               - 3 -               %%%%
 %%%%               PASO                %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -149,7 +149,7 @@ compite(Candidato,Provincia,Partido):-
 	sePostula(Partido,Provincia).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%               · 4 ·               %%%%
+%%%%               - 4 -               %%%%
 %%%%         El gran candidato         %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -175,7 +175,7 @@ esMayor(Candidato,CandidatoJoven):-
 % Deberíamos realizar una consulta de tipo Existencial, ya que nos permite conocer al individuo que satisface la relación.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%               · 5 ·               %%%%
+%%%%               - 5 -               %%%%
 %%%%         Malas consultoras         %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -199,7 +199,7 @@ nuevoPorcentaje(Porcentaje,Modificacion,PorcentajeVerdadero):-
 	PorcentajeVerdadero is Porcentaje + Porcentaje*Modificacion.*/
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%               · 6 ·               %%%%
+%%%%               - 6 -               %%%%
 %%%%        Promesas de campaña        %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -208,7 +208,7 @@ promete(azul,construir(edilicio(jardin,100))).
 promete(azul,construir(edilicio(escuela,5))).
 promete(amarillo,construir(edilicio(hospital,100))).
 promete(amarillo,construir(edilicio(universidad,1))).
-promete(amarillo,consturir(edilicio(comisaria,200))).
+promete(amarillo,construir(edilicio(comisaria,200))).
 promete(rojo,nuevosPuestosDeTrabajo(800000)).
 promete(amarillo,nuevosPuestosDeTrabajo(10000)).
 promete(azul,inflacion(2,4)).
@@ -216,7 +216,7 @@ promete(amarillo,inflacion(1,15)).
 promete(rojo,inflacion(10,30)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%               · 7 ·               %%%%
+%%%%               - 7 -               %%%%
 %%%%      Ajustes de boca de urna      %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -241,14 +241,18 @@ influenciaDePromesas(construir(edilicio(comisaria,200)),2).
 
 influenciaDePromesas(construir(edilicio(universidad,_)),0).
 
-influenciaDePromesas(construir(edilicio(_,_)),(-1)).
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%               · 8 ·               %%%%
+%%%%               - 8 -               %%%%
 %%%%           Nuevos votos            %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+partido(Partido):- 
+	sePostula(Partido,_).
 
-/* promedioDeCrecimiento(Partido,SumatoriaCrecimiento):-
+promedioDeCrecimiento(Partido,SumatoriaCrecimiento):-
+	partido(Partido),		% Generador de Partido.
+	findall(Porcentaje,	influenciaDePromesasDelPartido(_,Porcentaje,Partido),Porcentajes),
+	sumlist(Porcentajes,SumatoriaCrecimiento).
+
+influenciaDePromesasDelPartido(Promesa,Porcentaje,Partido):-
 	promete(Partido,Promesa),
-	findall(Porcentaje,influenciaDePromesas(Promesa,Porcentaje),Porcentajes),
-	sumlist(Porcentajes,SumatoriaCrecimiento). */
+	influenciaDePromesas(Promesa,Porcentaje).
