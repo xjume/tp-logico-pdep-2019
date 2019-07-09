@@ -58,7 +58,8 @@ habitantes(corrientes,992595).
 habitantes(misiones,1189446).
 
 % No se define el partido violeta porque no tiene candidatos.
-% No se define la no pertenencia de Peter al partido Amarillo porque sólo declaramos verdades.
+% No se define la no pertenencia de Peter al partido Amarillo porque
+% solo declaramos verdades.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%               · 2 ·               %%%%
@@ -152,25 +153,22 @@ compite(Candidato,Provincia,Partido):-
 %%%%               · 4 ·               %%%%
 %%%%         El gran candidato         %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/*elGranCandidato(Candidato):-
+elGranCandidato(Candidato):-
 	forall(compite(Candidato,Provincia,_), leGanaA(Candidato,_,Provincia)),
 	candidato(Candidato,Partido),
 	esElMasJoven(Candidato,Partido).
 
 esElMasJoven(CandidatoUnico,Partido):-
 	forall(candidato(Candidato,Partido),sonElMismo(Candidato,CandidatoUnico)).
-
 esElMasJoven(CandidatoJoven,Partido):-
-	forall(candidato(Candidato,Partido),esMayor(Candidato,CandidatoJoven)).
+	forall(candidato(Candidato,Partido),not(esMayor(CandidatoJoven,Candidato))).
 
 sonElMismo(Candidato,Candidato).
-
 esMayor(Candidato,CandidatoJoven):-
 	edad(Candidato,Edad),
 	edad(CandidatoJoven,EdadJoven),
 	Candidato \= CandidatoJoven,
-	Edad > EdadJoven.*/
+	Edad > EdadJoven.
 
 % Deberíamos realizar una consulta de tipo Existencial, ya que nos permite conocer al individuo que satisface la relación.
 
@@ -179,24 +177,23 @@ esMayor(Candidato,CandidatoJoven):-
 %%%%         Malas consultoras         %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/*ajusteConsultora(Partido,Provincia,PorcentajeVerdadero):-
-	intencionDeVotoEn(Provincia,Partido,Porcentaje),
-	partidoEnProvincia(Partido,Provincia,ModificacionSegunResultado),
-	nuevoPorcentaje(Porcentaje,ModificacionSegunResultado,PorcentajeVerdadero).
+ajusteConsultora(Partido,Provincia,PorcentajeVotos):-
+    porcentajeVoto(Provincia,Partido,PorcentajeVotos).
 
-partidoEnProvincia(Partido,Provincia,(-0.2)):-
-	forall(sePostula(PartidoX,Provincia),ganaElPartido(Partido,PartidoX,Provincia)).
+porcentajeVoto(Provincia,Partido,PorcentajeVotos):-
+    intencionDeVotoEn(Provincia,Partido,Porcentaje),
+    not(ganaPartido(Partido,Provincia)),
+    PorcentajeVotos is Porcentaje + 5.
 
-partidoEnProvincia(Partido,Provincia,0.5):-
-	forall(sePostula(PartidoX,Provincia),not(ganaElPartido(Partido,PartidoX,Provincia))).
+porcentajeVoto(Provincia,Partido,PorcentajeVotos):-
+    ganaPartido(Partido,Provincia),
+    intencionDeVotoEn(Provincia,Partido,Porcentaje),
+    PorcentajeVotos is Porcentaje - 20.
 
-ganaElPartido(Partido,PartidoX,Provincia):-
-	intencionDeVotoEn(Provincia,Partido,Porcentaje),
-	intencionDeVotoEn(Provincia,PartidoX,PorcentajeX),
-	Porcentaje > PorcentajeX.
-
-nuevoPorcentaje(Porcentaje,Modificacion,PorcentajeVerdadero):-
-	PorcentajeVerdadero is Porcentaje + Porcentaje*Modificacion.*/
+ganaPartido(Partido,Provincia):-
+    leGanaA(Candidato,_,Provincia),
+    candidatoJoven(Candidato),% este candidato joven vendria del punto 4 donde en el gran candidato te piden el candidato mas joven del partido
+    candidatos(Candidato,Partido).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%               · 6 ·               %%%%
@@ -248,7 +245,7 @@ influenciaDePromesas(construir(edilicio(_,_)),(-1)).
 %%%%           Nuevos votos            %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/* promedioDeCrecimiento(Partido,SumatoriaCrecimiento):-
+promedioDeCrecimiento(Partido,SumatoriaCrecimiento):-
 	promete(Partido,Promesa),
 	findall(Porcentaje,influenciaDePromesas(Promesa,Porcentaje),Porcentajes),
-	sumlist(Porcentajes,SumatoriaCrecimiento). */
+	sumlist(Porcentajes,SumatoriaCrecimiento).
