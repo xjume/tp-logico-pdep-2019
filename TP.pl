@@ -153,22 +153,46 @@ compite(Candidato,Provincia,Partido):-
 %%%%               - 4 -               %%%%
 %%%%         El gran candidato         %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 elGranCandidato(Candidato):-
-	forall(compite(Candidato,Provincia,_), leGanaA(Candidato,_,Provincia)),
-	candidato(Candidato,Partido),
-	esElMasJoven(Candidato,Partido).
+    candidato(Candidato,Partido),
+    forall(compite(_,Provincia,Partido), elPartidoGanaEnEsaProvincia(Partido,Provincia)),
+    esElMasJoven(Candidato,Partido).
 
-esElMasJoven(CandidatoUnico,Partido):-
-	forall(candidato(Candidato,Partido),sonElMismo(Candidato,CandidatoUnico)).
 esElMasJoven(CandidatoJoven,Partido):-
-	forall(candidato(Candidato,Partido),not(esMayor(CandidatoJoven,Candidato))).
+    candidato(CandidatoJoven,Partido),
+    forall(candidato(Candidato,Partido), esMenor(CandidatoJoven,Candidato)).
 
-sonElMismo(Candidato,Candidato).
-esMayor(Candidato,CandidatoJoven):-
-	edad(Candidato,Edad),
-	edad(CandidatoJoven,EdadJoven),
-	Candidato \= CandidatoJoven,
-	Edad > EdadJoven.
+esMenor(Candidato,CandidatoMayor):-
+    candidato(Candidato,Partido),
+    candidato(CandidatoMayor,Partido),
+    edad(Candidato,Edad),
+    edad(CandidatoMayor,EdadMayor),
+    Edad<EdadMayor.
+
+esMenor(Candidato,CandidatoMayor):-
+    sonElMismo(Candidato,CandidatoMayor).
+
+sonElMismo(Elemento,Elemento).
+
+elPartidoGanaEnEsaProvincia(Partido,Provincia):-
+    sePostula(Partido,Provincia),
+    postulacionUnica(Provincia).
+
+elPartidoGanaEnEsaProvincia(Partido,Provincia):-
+    sePostula(Partido,Provincia),
+    forall(sePostula(Partido,Provincia),intencionDeVotosMayor(Partido,_,Provincia)).
+
+postulacionUnica(Provincia):-
+	sePostula(UnPartido,Provincia),
+	forall(sePostula(Partido,Provincia),sonElMismo(Partido,UnPartido)).
+
+intencionDeVotosMayor(Partido1,Partido2,Provincia):-
+    sePostula(Partido1,Provincia),
+    sePostula(Partido2,Provincia),
+    intencionDeVotoEn(Provincia,Partido1,Porcentaje1),
+    intencionDeVotoEn(Provincia,Partido2,Porcentaje2),
+    Porcentaje1 > Porcentaje2.
 
 % Deberíamos realizar una consulta de tipo Existencial, ya que nos permite conocer al individuo que satisface la relación.
 
@@ -192,8 +216,8 @@ porcentajeVoto(Provincia,Partido,PorcentajeVotos):-
 
 ganaPartido(Partido,Provincia):-
     leGanaA(Candidato,_,Provincia),
-    candidatoJoven(Candidato),% este candidato joven vendria del punto 4 donde en el gran candidato te piden el candidato mas joven del partido
-    candidatos(Candidato,Partido).
+    elGranCandidato(Candidato),
+    candidato(Candidato,Partido).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%               - 6 -               %%%%
@@ -242,14 +266,14 @@ influenciaDePromesas(construir(edilicio(universidad,_)),0).
 %%%%               - 8 -               %%%%
 %%%%           Nuevos votos            %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-partido(Partido):-
-	sePostula(Partido,_).
 
 promedioDeCrecimiento(Partido,SumatoriaCrecimiento):-
 	partido(Partido),		% Generador de Partido.
 	findall(Porcentaje,	influenciaDePromesasDelPartido(_,Porcentaje,Partido),Porcentajes),
 	sumlist(Porcentajes,SumatoriaCrecimiento).
 
+partido(Partido):-
+	sePostula(Partido,_).
 
 influenciaDePromesasDelPartido(Promesa,Porcentaje,Partido):-
 	promete(Partido,Promesa),
